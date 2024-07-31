@@ -1,0 +1,20 @@
+class Solution {
+    private static final int MOD = 1000000007;
+    public long multiplyTwoLists(Node first, Node second) {
+        // Code here
+          long num1 = convertListToNumber(first);
+        long num2 = convertListToNumber(second);
+        
+        // Multiply the two numbers and take modulo
+        return (num1 * num2) % MOD;
+    }
+    
+    private long convertListToNumber(Node head) {
+        long number = 0;
+        while (head != null) {
+            number = (number * 10 + head.data) % MOD;
+            head = head.next;
+        }
+        return number;
+    }
+}
