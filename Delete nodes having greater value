@@ -1,0 +1,44 @@
+class Solution
+{
+    Node compute(Node head)
+    {
+        // your code here
+          head = reverse(head);
+        
+        // Initialize the max value with the head node's value
+        Node maxNode = head;
+        Node curr = head;
+        
+        // Traverse the reversed list
+        while (curr != null && curr.next != null) {
+            // If the next node's value is less than maxNode's value, remove it
+            if (curr.next.data < maxNode.data) {
+                curr.next = curr.next.next;
+            } else {
+                // Update maxNode to the current node
+                curr = curr.next;
+                maxNode = curr;
+            }
+        }
+        
+        // Reverse the list again to restore original order
+        head = reverse(head);
+        return head;
+    }
+    
+    // Helper function to reverse the linked list
+    Node reverse(Node head) {
+        Node prev = null;
+        Node curr = head;
+        Node next = null;
+        
+        while (curr != null) {
+            next = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = next;
+        }
+        
+        return prev;
+    }
+}
