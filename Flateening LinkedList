@@ -1,0 +1,38 @@
+class Solution {
+    // Function to flatten a linked list
+    Node merge(Node a, Node b) {
+        // If either list is empty, return the other list
+        if (a == null) return b;
+        if (b == null) return a;
+        
+        Node result;
+        
+        // Compare the data values to merge in sorted order
+        if (a.data < b.data) {
+            result = a;
+            result.bottom = merge(a.bottom, b);
+        } else {
+            result = b;
+            result.bottom = merge(a, b.bottom);
+        }
+        
+        result.next = null; // Ensure the next pointer is null
+        return result;
+    }
+
+    // Function to flatten the linked list
+    Node flatten(Node root) {
+        // Base cases
+        if (root == null || root.next == null) {
+            return root;
+        }
+        
+        // Recursively flatten the next list
+        root.next = flatten(root.next);
+        
+        // Merge the current list with the flattened next list
+        root = merge(root, root.next);
+        
+        return root;
+    }
+}
