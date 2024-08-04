@@ -1,0 +1,42 @@
+class Solution
+{
+    //Function to evaluate a postfix expression.
+    public static int evaluatePostFix(String S)
+    {
+        // Your code here
+           Stack<Integer> stack = new Stack<>();
+
+        // Iterate through each character in the string
+        for (int i = 0; i < S.length(); i++) {
+            char ch = S.charAt(i);
+
+            // If the character is a digit, push it onto the stack
+            if (Character.isDigit(ch)) {
+                stack.push(ch - '0'); // Convert char to int and push
+            } else {
+                // If the character is an operator, pop two elements from the stack
+                int val1 = stack.pop();
+                int val2 = stack.pop();
+
+                // Apply the operator and push the result back onto the stack
+                switch (ch) {
+                    case '+':
+                        stack.push(val2 + val1);
+                        break;
+                    case '-':
+                        stack.push(val2 - val1);
+                        break;
+                    case '*':
+                        stack.push(val2 * val1);
+                        break;
+                    case '/':
+                        stack.push(val2 / val1);
+                        break;
+                }
+            }
+        }
+
+        // The final result will be the only element left in the stack
+        return stack.pop();
+    }
+}
