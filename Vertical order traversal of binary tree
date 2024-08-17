@@ -1,0 +1,105 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+import java.util.*;
+
+class TreeNode {
+    int val;
+    TreeNode left, right;
+    TreeNode(int val) {
+        this.val = val;
+    }
+}
+
+class Solution {
+    public List<List<Integer>> verticalTraversal(TreeNode root) {
+        // TreeMap to keep columns in sorted order and a List to store nodes by their positions
+        TreeMap<Integer, List<int[]>> columnTable = new TreeMap<>();
+        Queue<Pair<TreeNode, int[]>> queue = new LinkedList<>();
+        
+        // Start with the root node at column 0, row 0
+        queue.offer(new Pair<>(root, new int[]{0, 0}));
+        
+        while (!queue.isEmpty()) {
+            Pair<TreeNode, int[]> pair = queue.poll();
+            TreeNode node = pair.getKey();
+            int col = pair.getValue()[0];
+            int row = pair.getValue()[1];
+            
+            // Add the node to the columnTable
+            columnTable.putIfAbsent(col, new ArrayList<>());
+            columnTable.get(col).add(new int[]{row, node.val});
+            
+            // If there is a left child, go to the left (column - 1, row + 1)
+            if (node.left != null) {
+                queue.offer(new Pair<>(node.left, new int[]{col - 1, row + 1}));
+            }
+            
+            // If there is a right child, go to the right (column + 1, row + 1)
+            if (node.right != null) {
+                queue.offer(new Pair<>(node.right, new int[]{col + 1, row + 1}));
+            }
+        }
+        
+        // Prepare the final result list
+        List<List<Integer>> result = new ArrayList<>();
+        
+        // Process each column in the sorted order
+        for (int col : columnTable.keySet()) {
+            // Sort the list of pairs first by row and then by value
+            List<int[]> list = columnTable.get(col);
+            Collections.sort(list, (a, b) -> {
+                if (a[0] == b[0]) return a[1] - b[1];
+                else return a[0] - b[0];
+            });
+            
+            // Add the sorted values to the result
+            List<Integer> sortedColumn = new ArrayList<>();
+            for (int[] pair : list) {
+                sortedColumn.add(pair[1]);
+            }
+            result.add(sortedColumn);
+        }
+        
+        return result;
+    }
+    
+    public static void main(String[] args) {
+        TreeNode root = new TreeNode(3);
+        root.left = new TreeNode(9);
+        root.right = new TreeNode(20);
+        root.right.left = new TreeNode(15);
+        root.right.right = new TreeNode(7);
+        
+        Solution sol = new Solution();
+        List<List<Integer>> result = sol.verticalTraversal(root);
+        
+        // Print the result
+        for (List<Integer> col : result) {
+            System.out.println(col);
+        }
+    }
+}
+
+class Pair<K, V> {
+    private final K key;
+    private final V value;
+    public Pair(K key, V value) {
+        this.key = key;
+        this.value = value;
+    }
+    public K getKey() { return key; }
+    public V getValue() { return value; }
+}
