@@ -1,0 +1,42 @@
+public class Solution {
+    public int pathSum(TreeNode root, int targetSum) {
+        HashMap<Long, Integer> prefixSumCount = new HashMap<>();
+        prefixSumCount.put(0L, 1); // Base case for when the path sum itself equals the targetSum
+        return dfs(root, 0, targetSum, prefixSumCount);
+    }
+    
+    private int dfs(TreeNode node, long currentSum, int targetSum, HashMap<Long, Integer> prefixSumCount) {
+        if (node == null) {
+            return 0;
+        }
+        
+        currentSum += node.val;
+        int numPaths = prefixSumCount.getOrDefault(currentSum - targetSum, 0);
+        
+        // Add current path sum to the hashmap
+        prefixSumCount.put(currentSum, prefixSumCount.getOrDefault(currentSum, 0) + 1);
+        
+        // Recurse to left and right children
+        numPaths += dfs(node.left, currentSum, targetSum, prefixSumCount);
+        numPaths += dfs(node.right, currentSum, targetSum, prefixSumCount);
+        
+        // Remove the current path sum from the hashmap
+        prefixSumCount.put(currentSum, prefixSumCount.get(currentSum) - 1);
+        
+        return numPaths;
+    }
+    
+    // Helper function to construct tree from array
+    public static TreeNode constructTree(Integer[] arr) {
+        if (arr == null || arr.length == 0) return null;
+        return constructTreeHelper(arr, 0);
+    }
+
+    private static TreeNode constructTreeHelper(Integer[] arr, int index) {
+        if (index >= arr.length || arr[index] == null) return null;
+        TreeNode node = new TreeNode(arr[index]);
+        node.left = constructTreeHelper(arr, 2 * index + 1);
+        node.right = constructTreeHelper(arr, 2 * index + 2);
+        return node;
+    }
+}
