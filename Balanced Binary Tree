@@ -1,0 +1,32 @@
+ 
+public class Solution {
+    public boolean isBalanced(TreeNode root) {
+        // Use a helper function to determine if the tree is balanced and get the height
+        return checkHeight(root) != -1;
+    }
+    
+    // Helper function to check the height of the tree
+    private int checkHeight(TreeNode node) {
+        // Base case: an empty node is balanced with height 0
+        if (node == null) {
+            return 0;
+        }
+        
+        // Recursively get the height of the left and right subtrees
+        int leftHeight = checkHeight(node.left);
+        int rightHeight = checkHeight(node.right);
+        
+        // If left or right subtree is not balanced, return -1
+        if (leftHeight == -1 || rightHeight == -1) {
+            return -1;
+        }
+        
+        // Check if the current node is balanced
+        if (Math.abs(leftHeight - rightHeight) > 1) {
+            return -1;
+        }
+        
+        // Return the height of the current node
+        return Math.max(leftHeight, rightHeight) + 1;
+    }
+}
