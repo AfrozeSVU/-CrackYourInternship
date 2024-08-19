@@ -1,0 +1,64 @@
+import java.util.LinkedList;
+import java.util.Queue;
+
+class Solution {
+    public int shortestBridge(int[][] grid) {
+        int n = grid.length;
+        boolean[][] visited = new boolean[n][n];
+        Queue<int[]> queue = new LinkedList<>();
+        boolean found = false;
+        
+        // Step 1: Find the first island and mark all its positions
+        for (int i = 0; i < n; i++) {
+            if (found) break;
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == 1) {
+                    dfs(grid, visited, queue, i, j);
+                    found = true;
+                    break;
+                }
+            }
+        }
+        
+        // Step 2: Expand using BFS until we find the second island
+        int steps = 0;
+        int[][] directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+        
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            for (int i = 0; i < size; i++) {
+                int[] cell = queue.poll();
+                int x = cell[0], y = cell[1];
+                
+                for (int[] dir : directions) {
+                    int nx = x + dir[0], ny = y + dir[1];
+                    
+                    if (nx >= 0 && nx < n && ny >= 0 && ny < n && !visited[nx][ny]) {
+                        if (grid[nx][ny] == 1) {
+                            return steps;
+                        }
+                        visited[nx][ny] = true;
+                        queue.offer(new int[]{nx, ny});
+                    }
+                }
+            }
+            steps++;
+        }
+        
+        return -1;  // This should never be reached
+    }
+    
+    private void dfs(int[][] grid, boolean[][] visited, Queue<int[]> queue, int x, int y) {
+        int n = grid.length;
+        if (x < 0 || x >= n || y < 0 || y >= n || visited[x][y] || grid[x][y] == 0) {
+            return;
+        }
+        visited[x][y] = true;
+        queue.offer(new int[]{x, y});
+        
+        dfs(grid, visited, queue, x + 1, y);
+        dfs(grid, visited, queue, x - 1, y);
+        dfs(grid, visited, queue, x, y + 1);
+        dfs(grid, visited, queue, x, y - 1);
+    }
+}
