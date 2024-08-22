@@ -1,0 +1,54 @@
+ 
+
+class Solution {
+    public int snakesAndLadders(int[][] board) {
+        int n = board.length;
+        int[] visited = new int[n * n + 1];
+        Queue<int[]> queue = new LinkedList<>();
+        
+        // Start from square 1
+        queue.offer(new int[]{1, 0}); // {square, moves}
+        visited[1] = 1;
+
+        while (!queue.isEmpty()) {
+            int[] current = queue.poll();
+            int square = current[0];
+            int moves = current[1];
+            
+            // If we reach the final square, return the number of moves
+            if (square == n * n) return moves;
+
+            // Explore the next 6 squares
+            for (int i = 1; i <= 6; i++) {
+                int nextSquare = square + i;
+                if (nextSquare > n * n) break;
+                
+                int[] rc = getCoordinates(nextSquare, n);
+                int r = rc[0], c = rc[1];
+                
+                // If there's a snake or ladder, move to its destination
+                if (board[r][c] != -1) {
+                    nextSquare = board[r][c];
+                }
+                
+                if (visited[nextSquare] == 0) {
+                    visited[nextSquare] = 1;
+                    queue.offer(new int[]{nextSquare, moves + 1});
+                }
+            }
+        }
+        
+        return -1; // If we cannot reach the final square
+    }
+    
+    // Convert 1D square number to 2D coordinates
+    private int[] getCoordinates(int square, int n) {
+        int r = (square - 1) / n;
+        int c = (square - 1) % n;
+        if (r % 2 == 1) {
+            c = n - 1 - c; // Reverse column for odd rows
+        }
+        r = n - 1 - r; // Reverse row number because we start from bottom-left
+        return new int[]{r, c};
+    }
+}
