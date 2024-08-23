@@ -1,0 +1,54 @@
+class Solution {
+    private int time = 0;
+    
+    public List<List<Integer>> criticalConnections(int n, List<List<Integer>> connections) {
+        // Build the graph using an adjacency list
+        List<Integer>[] graph = new ArrayList[n];
+        for (int i = 0; i < n; i++) {
+            graph[i] = new ArrayList<>();
+        }
+        
+        for (List<Integer> connection : connections) {
+            int u = connection.get(0);
+            int b = connection.get(1);
+            graph[u].add(b);
+            graph[b].add(u);
+        }
+        
+        // Initialize discovery and low arrays
+        int[] disc = new int[n];
+        int[] low = new int[n];
+        Arrays.fill(disc, -1); // -1 denotes unvisited
+        
+        // List to store the result
+        List<List<Integer>> result = new ArrayList<>();
+        
+        // Perform DFS from the first node (node 0)
+        dfs(0, -1, disc, low, graph, result);
+        
+        return result;
+    }
+    
+    private void dfs(int u, int parent, int[] disc, int[] low, List<Integer>[] graph, List<List<Integer>> result) {
+        disc[u] = low[u] = ++time; // Set discovery time and low value
+        
+        for (int v : graph[u]) {
+            if (v == parent) continue; // If v is the parent, skip it
+            
+            if (disc[v] == -1) { // If v is not visited
+                dfs(v, u, disc, low, graph, result);
+                
+                // Check if the subtree rooted at v has a connection back to one of u's ancestors
+                low[u] = Math.min(low[u], low[v]);
+                
+                // If the lowest vertex reachable from v is higher than the discovery time of u,
+                // then u-v is a critical connection
+                if (low[v] > disc[u]) {
+                    result.add(Arrays.asList(u, v));
+                }
+            } else { // If v is already visited, update the low value of u
+                low[u] = Math.min(low[u], disc[v]);
+            }
+        }
+    }
+}
