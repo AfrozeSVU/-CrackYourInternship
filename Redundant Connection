@@ -1,0 +1,59 @@
+class Solution {
+    public int[] findRedundantConnection(int[][] edges) {
+        int n = edges.length;
+        UnionFind uf = new UnionFind(n + 1); // n+1 to accommodate 1-based indexing
+
+        for (int[] edge : edges) {
+            int node1 = edge[0];
+            int node2 = edge[1];
+
+            if (!uf.union(node1, node2)) {
+                return edge; // If union returns false, the edge is redundant
+            }
+        }
+
+        return new int[0]; // Should not reach here as there's guaranteed to be one redundant edge
+    }
+}
+
+class UnionFind {
+    private int[] parent;
+    private int[] rank;
+
+    public UnionFind(int size) {
+        parent = new int[size];
+        rank = new int[size];
+        for (int i = 0; i < size; i++) {
+            parent[i] = i;
+            rank[i] = 1;
+        }
+    }
+
+    public int find(int x) {
+        if (parent[x] != x) {
+            parent[x] = find(parent[x]); // Path compression
+        }
+        return parent[x];
+    }
+
+    public boolean union(int x, int y) {
+        int rootX = find(x);
+        int rootY = find(y);
+
+        if (rootX == rootY) {
+            return false; // They are already in the same set, so this edge is redundant
+        }
+
+        // Union by rank
+        if (rank[rootX] > rank[rootY]) {
+            parent[rootY] = rootX;
+        } else if (rank[rootX] < rank[rootY]) {
+            parent[rootX] = rootY;
+        } else {
+            parent[rootY] = rootX;
+            rank[rootX]++;
+        }
+
+        return true;
+    }
+}
