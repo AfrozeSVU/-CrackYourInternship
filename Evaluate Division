@@ -1,0 +1,58 @@
+ 
+
+class Solution {
+    public double[] calcEquation(List<List<String>> equations, double[] values, List<List<String>> queries) {
+        // Step 1: Build the graph
+        Map<String, Map<String, Double>> graph = new HashMap<>();
+        for (int i = 0; i < equations.size(); i++) {
+            String A = equations.get(i).get(0);
+            String B = equations.get(i).get(1);
+            double value = values[i];
+            
+            graph.putIfAbsent(A, new HashMap<>());
+            graph.putIfAbsent(B, new HashMap<>());
+            graph.get(A).put(B, value);
+            graph.get(B).put(A, 1.0 / value);
+        }
+        
+        // Step 2: Answer the queries
+        double[] results = new double[queries.size()];
+        for (int i = 0; i < queries.size(); i++) {
+            String C = queries.get(i).get(0);
+            String D = queries.get(i).get(1);
+            
+            if (!graph.containsKey(C) || !graph.containsKey(D)) {
+                results[i] = -1.0;
+            } else if (C.equals(D)) {
+                results[i] = 1.0;
+            } else {
+                Set<String> visited = new HashSet<>();
+                results[i] = dfs(graph, C, D, 1.0, visited);
+            }
+        }
+        
+        return results;
+    }
+    
+    private double dfs(Map<String, Map<String, Double>> graph, String current, String target, double accProduct, Set<String> visited) {
+        // If we've reached the target node, return the accumulated product
+        if (current.equals(target)) {
+            return accProduct;
+        }
+        
+        visited.add(current);
+        
+        Map<String, Double> neighbors = graph.get(current);
+        for (String neighbor : neighbors.keySet()) {
+            if (!visited.contains(neighbor)) {
+                double product = dfs(graph, neighbor, target, accProduct * neighbors.get(neighbor), visited);
+                if (product != -1.0) {
+                    return product;
+                }
+            }
+        }
+        
+        // If no valid path was found, return -1.0
+        return -1.0;
+    }
+}
