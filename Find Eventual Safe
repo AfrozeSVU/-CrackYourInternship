@@ -1,0 +1,34 @@
+ 
+
+class Solution {
+    public List<Integer> eventualSafeNodes(int[][] graph) {
+        int n = graph.length;
+        int[] color = new int[n]; // 0 = unvisited, 1 = visiting, 2 = safe
+        List<Integer> safeNodes = new ArrayList<>();
+        
+        for (int i = 0; i < n; i++) {
+            if (dfs(graph, i, color)) {
+                safeNodes.add(i);
+            }
+        }
+        
+        Collections.sort(safeNodes); // Sorting the result in ascending order
+        return safeNodes;
+    }
+    
+    private boolean dfs(int[][] graph, int node, int[] color) {
+        if (color[node] != 0) {
+            return color[node] == 2; // Return true if the node is already marked safe
+        }
+        
+        color[node] = 1; // Mark the node as visiting (part of the current path)
+        for (int neighbor : graph[node]) {
+            if (!dfs(graph, neighbor, color)) {
+                return false; // If any neighbor is not safe, this node is not safe
+            }
+        }
+        
+        color[node] = 2; // Mark the node as safe
+        return true;
+    }
+}
