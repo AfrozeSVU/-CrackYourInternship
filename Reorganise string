@@ -1,0 +1,40 @@
+ 
+class Solution {
+    public String reorganizeString(String s) {
+        // Step 1: Count the frequency of each character
+        Map<Character, Integer> freqMap = new HashMap<>();
+        for (char c : s.toCharArray()) {
+            freqMap.put(c, freqMap.getOrDefault(c, 0) + 1);
+        }
+
+        // Step 2: Use a max heap to store the characters based on frequency
+        PriorityQueue<Map.Entry<Character, Integer>> maxHeap = new PriorityQueue<>(
+            (a, b) -> b.getValue() - a.getValue()
+        );
+        maxHeap.addAll(freqMap.entrySet());
+
+        // Step 3: Build the result string
+        StringBuilder result = new StringBuilder();
+        Map.Entry<Character, Integer> prev = null;
+
+        while (!maxHeap.isEmpty()) {
+            Map.Entry<Character, Integer> current = maxHeap.poll();
+
+            // Append the current character to the result
+            result.append(current.getKey());
+
+            // Decrease the frequency and check if it should be re-added to the heap
+            current.setValue(current.getValue() - 1);
+
+            if (prev != null && prev.getValue() > 0) {
+                maxHeap.add(prev);
+            }
+
+            // Update prev to the current character
+            prev = current;
+        }
+
+        // If the rearranged string's length is not equal to the original string's length, return ""
+        return result.length() == s.length() ? result.toString() : "";
+    }
+}
