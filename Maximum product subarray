@@ -1,0 +1,27 @@
+class Solution {
+    public int maxProduct(int[] nums) {
+        if (nums.length == 0) return 0;
+
+        int maxProduct = nums[0];
+        int currMax = nums[0];
+        int currMin = nums[0];
+
+        for (int i = 1; i < nums.length; i++) {
+            // If the current number is negative, swap the max and min
+            if (nums[i] < 0) {
+                int temp = currMax;
+                currMax = currMin;
+                currMin = temp;
+            }
+
+            // Update the current max and min products
+            currMax = Math.max(nums[i], currMax * nums[i]);
+            currMin = Math.min(nums[i], currMin * nums[i]);
+
+            // Update the overall max product
+            maxProduct = Math.max(maxProduct, currMax);
+        }
+
+        return maxProduct;
+    }
+}
