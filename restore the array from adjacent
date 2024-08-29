@@ -1,0 +1,45 @@
+ 
+class Solution {
+    public int[] restoreArray(int[][] adjacentPairs) {
+        // Step 1: Build the graph using a hashmap
+        Map<Integer, List<Integer>> adjMap = new HashMap<>();
+        
+        // Populate the adjacency map
+        for (int[] pair : adjacentPairs) {
+            adjMap.putIfAbsent(pair[0], new ArrayList<>());
+            adjMap.putIfAbsent(pair[1], new ArrayList<>());
+            adjMap.get(pair[0]).add(pair[1]);
+            adjMap.get(pair[1]).add(pair[0]);
+        }
+        
+        // Step 2: Find one of the end points (which has only one adjacent node)
+        int start = 0;
+        for (int key : adjMap.keySet()) {
+            if (adjMap.get(key).size() == 1) {
+                start = key;
+                break;
+            }
+        }
+        
+        // Step 3: Reconstruct the array
+        int n = adjacentPairs.length + 1;
+        int[] result = new int[n];
+        Set<Integer> visited = new HashSet<>();
+        
+        result[0] = start;
+        visited.add(start);
+        
+        for (int i = 1; i < n; i++) {
+            List<Integer> neighbors = adjMap.get(result[i - 1]);
+            for (int neighbor : neighbors) {
+                if (!visited.contains(neighbor)) {
+                    result[i] = neighbor;
+                    visited.add(neighbor);
+                    break;
+                }
+            }
+        }
+        
+        return result;
+    }
+}
