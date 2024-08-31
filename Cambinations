@@ -1,0 +1,27 @@
+ 
+
+class Solution {
+    public List<List<Integer>> combine(int n, int k) {
+        List<List<Integer>> result = new ArrayList<>();
+        backtrack(result, new ArrayList<>(), 1, n, k);
+        return result;
+    }
+    
+    private void backtrack(List<List<Integer>> result, List<Integer> combination, int start, int n, int k) {
+        // If the combination is of length k, add it to the result
+        if (combination.size() == k) {
+            result.add(new ArrayList<>(combination));
+            return;
+        }
+        
+        // Loop through the numbers from start to n
+        for (int i = start; i <= n; i++) {
+            // Add the current number to the combination
+            combination.add(i);
+            // Recurse with the next starting number
+            backtrack(result, combination, i + 1, n, k);
+            // Backtrack: remove the last number added
+            combination.remove(combination.size() - 1);
+        }
+    }
+}
