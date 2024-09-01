@@ -1,0 +1,70 @@
+ 
+class Solution {
+    private class Pair {
+        int value;
+        int index;
+
+        Pair(int value, int index) {
+            this.value = value;
+            this.index = index;
+        }
+    }
+
+    public List<Integer> countSmaller(int[] nums) {
+        int n = nums.length;
+        List<Integer> result = new ArrayList<>();
+        Pair[] pairs = new Pair[n];
+        Integer[] counts = new Integer[n];
+        
+        for (int i = 0; i < n; i++) {
+            pairs[i] = new Pair(nums[i], i);
+            counts[i] = 0;
+        }
+        
+        mergeSort(pairs, counts, 0, n - 1);
+
+        for (int count : counts) {
+            result.add(count);
+        }
+
+        return result;
+    }
+
+    private void mergeSort(Pair[] pairs, Integer[] counts, int left, int right) {
+        if (left >= right) {
+            return;
+        }
+
+        int mid = left + (right - left) / 2;
+        mergeSort(pairs, counts, left, mid);
+        mergeSort(pairs, counts, mid + 1, right);
+        merge(pairs, counts, left, mid, right);
+    }
+
+    private void merge(Pair[] pairs, Integer[] counts, int left, int mid, int right) {
+        List<Pair> temp = new ArrayList<>();
+        int i = left, j = mid + 1;
+
+        while (i <= mid && j <= right) {
+            if (pairs[i].value <= pairs[j].value) {
+                counts[pairs[i].index] += j - (mid + 1);
+                temp.add(pairs[i++]);
+            } else {
+                temp.add(pairs[j++]);
+            }
+        }
+
+        while (i <= mid) {
+            counts[pairs[i].index] += j - (mid + 1);
+            temp.add(pairs[i++]);
+        }
+
+        while (j <= right) {
+            temp.add(pairs[j++]);
+        }
+
+        for (int k = left; k <= right; k++) {
+            pairs[k] = temp.get(k - left);
+        }
+    }
+}
