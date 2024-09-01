@@ -1,0 +1,68 @@
+class NumArray {
+
+    private int[] segmentTree;
+    private int n;
+
+    public NumArray(int[] nums) {
+        n = nums.length;
+        segmentTree = new int[2 * n];
+        buildTree(nums);
+    }
+    
+    private void buildTree(int[] nums) {
+        // Initialize the leaves
+        for (int i = 0; i < n; i++) {
+            segmentTree[i + n] = nums[i];
+        }
+        // Build the tree by calculating parents
+        for (int i = n - 1; i > 0; i--) {
+            segmentTree[i] = segmentTree[2 * i] + segmentTree[2 * i + 1];
+        }
+    }
+
+    public void update(int index, int val) {
+        // Update the leaf node
+        index += n;
+        segmentTree[index] = val;
+        // Update the tree
+        while (index > 0) {
+            int left = index;
+            int right = index;
+            if (index % 2 == 0) {
+                right = index + 1;
+            } else {
+                left = index - 1;
+            }
+            // Update parent
+            segmentTree[index / 2] = segmentTree[left] + segmentTree[right];
+            index /= 2;
+        }
+    }
+
+    public int sumRange(int left, int right) {
+        // Get the sum of elements from `left` to `right`
+        left += n;
+        right += n;
+        int sum = 0;
+        while (left <= right) {
+            if (left % 2 == 1) {
+                sum += segmentTree[left];
+                left++;
+            }
+            if (right % 2 == 0) {
+                sum += segmentTree[right];
+                right--;
+            }
+            left /= 2;
+            right /= 2;
+        }
+        return sum;
+    }
+}
+
+/**
+ * Your NumArray object will be instantiated and called as such:
+ * NumArray obj = new NumArray(nums);
+ * obj.update(index,val);
+ * int param_2 = obj.sumRange(left,right);
+ */
